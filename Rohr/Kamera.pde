@@ -16,7 +16,8 @@ Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in de
 
 void initCamera() {              // initialiesiert die Kamera 
 normalspeed=10;                            // init Wert für die Augengeschwindigkeit
-  auge = new PVector(200, 200, 200);        // init Werte für die Augenposition
+  auge = new PVector(400, 400, 400);        // init Werte für die Augenposition
+  center = new PVector(0,0,0);                // init Wert für Die Szene der Kamera
   UPVec = new PVector(0, 0, -1);             // init für die Richtung die als oben erscheinen soll
   noCursor();                                // deaktiviert den Curser
   try {                   
@@ -24,8 +25,14 @@ normalspeed=10;                            // init Wert für die Augengeschwindi
   }  
   catch(Throwable e) {
   }
-  rmx=width/2;
-  rmy=height/2;
+
+  float phi,deta;
+  richtung = center.sub(auge);          
+  phi= atan2(richtung.y,richtung.x);
+  rmx = map(phi,-PI,PI,0, width);
+  
+  deta = acos(richtung.z/richtung.mag());
+  rmy = map(deta, 0, PI,0,height ); 
   robot.mouseMove(
     frame.getX()+round(width/2), 
     frame.getY()+round(height/2));
@@ -80,9 +87,19 @@ void keyReleased() {                                        // kümmert sich dar
 void updateCamera() {        // eigentliche Berechnung der Kamera
 
   PVector front, side, speedup;
-  float phi = map(rmx, 0, width,  2*PI,0);              // mapt die Mausposition X auf einen Winkel phi in Kugelkoordinaten
-  float deta = map(rmy, 0, height,-PI,0 );              // mapt die Mausposition Y auf den Winkel deta
-  richtung = new PVector(-cos(phi)*sin(deta), sin(phi)*sin(deta), -cos(deta));   // macht einen Richtungsvektor draus -> Umrechnung von Kugelkoordinaten in Kartesische
+  float phi = map(rmx, 0, width, -PI, PI);              // mapt die Mausposition X auf einen Winkel phi in Kugelkoordinaten
+  //println(phi);
+  float deta = map(rmy, 0, height,0,PI );              // mapt die Mausposition Y auf den Winkel deta
+  richtung = new PVector(cos(phi)*sin(deta), sin(phi)*sin(deta), cos(deta));   // macht einen Richtungsvektor draus -> Umrechnung von Kugelkoordinaten in Kartesische
+  
+  //PVector front, side, speedup;
+  //float phi = map(rmx, 0, width,  2*PI,0);              // mapt die Mausposition X auf einen Winkel phi in Kugelkoordinaten
+  //println(phi);
+  //float deta = map(rmy, 0, height,-PI,0 );              // mapt die Mausposition Y auf den Winkel deta
+  //richtung = new PVector(-cos(phi)*sin(deta), sin(phi)*sin(deta), -cos(deta));   // macht einen Richtungsvektor draus -> Umrechnung von Kugelkoordinaten in Kartesische
+  
+  
+  
   richtung.normalize();                                //macht Einheitsvektor draus (Betrag 1)
   center= auge.copy();                                  //vektor auge kopiert in vektor auge 
   center.add(richtung);                                   // Punkt auf den die Camera schaut    addiert mathematisch -> Lage Betrachtungspunkt

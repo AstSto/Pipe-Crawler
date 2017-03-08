@@ -4,7 +4,7 @@ PVector pos, dir;
 int i;
 
  void setup () {          // diese Funktion wird einmalig bei Start aufgerufen
-  fullScreen(P3D);        
+  fullScreen(P3D,1);        
   initCamera();            // initialiesiert die Camera
   colorMode(RGB, 1);
   pos = new PVector(0, 0, 0);     // initialiesiert den ersten Roboterpunkt (wird später überschrieben)

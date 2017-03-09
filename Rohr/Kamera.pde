@@ -16,8 +16,8 @@ int started=0;
 Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in der Bibliothek definiert ist) 
 
 void initCamera() {              // initialiesiert die Kamera 
-  normalspeed=10;                            // init Wert für die Augengeschwindigkeit
-  initauge = new PVector(2500, 2500, 1000);        // init Werte für die Augenposition
+  normalspeed=15;                            // init Wert für die Augengeschwindigkeit
+  initauge = new PVector(2700, 2700, 1000);        // init Werte für die Augenposition
   initcenter = new PVector(0, 0, 0);                // init Wert für Die Szene der Kamera
   UPVec = new PVector(0, 0, -1);             // init für die Richtung die als oben erscheinen soll
   auge = initauge.copy();
@@ -34,7 +34,6 @@ void initCamera() {              // initialiesiert die Kamera
 void keyPressed() {        // reagiert auf Tastendrücke und verändert die Augenposition
   if (key == 'z'||key == 'Z') {
     zentrieren();
-    println("z");
   }
   if (key == 'a'||key == 'A') {  
     speedeyeside = normalspeed;
@@ -85,11 +84,9 @@ void updateCamera() {        // eigentliche Berechnung der Kamera
     zentrieren();
     started ++;
   }
-  println("rmx : "+rmx+" rmy : "+rmy);
   PVector front, side, speedup;
   float phi = map(rmx, 0, width, -PI, PI);              // mapt die Mausposition X auf einen Winkel phi in Kugelkoordinaten
   float deta = map(rmy, 0, height, 0, PI );              // mapt die Mausposition Y auf den Winkel deta
-  println("phi : "+phi+" , deta : "+deta);
   richtung = new PVector(cos(phi)*sin(deta), sin(phi)*sin(deta), cos(deta));   // macht einen Richtungsvektor draus -> Umrechnung von Kugelkoordinaten in Kartesische
 
   richtung.normalize();                                //macht Einheitsvektor draus (Betrag 1)

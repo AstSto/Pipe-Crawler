@@ -28,6 +28,7 @@ void draw () {            // wird regelmäßig automatisch aufgerufen
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
   wurfel();
   popMatrix();
+  println(frameRate);
 }
 
 void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
@@ -136,8 +137,8 @@ PVector Ecke(PVector posr, PVector x, PVector y, int r, float phi ) {
 
 void raster() {
 
-  int max = 20;
-  int scl = 100;
+  int max = 10;
+  int scl = 250;
   fill(0);
   stroke(0);
   for (int i = 0; i < max; i++ ) {
@@ -158,19 +159,36 @@ void raster() {
     //stroke(255, 0, 0);
     line(0, 0, i*scl, (max-1)*scl, 0, i*scl);
   }
-  text("X-Achse", max*scl, 0, 0);
+
+  // Achsenbeschriftung
+
   pushMatrix();
-  rotateZ(PI/2);
-  rotateY(PI);
-  rotateX(PI);
+  rotateX(PI*3/2);
+  text("X-Achse", max*scl, 0, 0);
+  rotateY(PI/2);
   text("Y-Achse", -max*scl-300, 0, 0);
   popMatrix();
 
   pushMatrix();
   rotateX(PI*3/2);
   text("Z-Achse", 0, -max*scl, 0);
-
   popMatrix();
+
+
+  textSize(50);
+  pushMatrix();
+  rotateX(PI*3/2);
+  for (int i = 1; i < max; i++ ) {     // Achsen-Skala
+    // dadurch: x' = x y'= -z z' = y
+    text(i*scl, i*scl, 0, 0);        // x - Achse
+    text(i*scl, 0, -i*scl, 0);       // y - Achse
+    pushMatrix();
+    rotateY(PI/2);
+    text(i*scl, -i*scl, 0, 0);
+    popMatrix();
+  }
+  popMatrix();
+  textSize(80);
 }
 
 void wurfel () {                    // nur ein Beispiel welches die Funktion fill() und Vertex verdeutlicht

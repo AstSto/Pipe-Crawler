@@ -16,7 +16,7 @@ int started=0;
 Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in der Bibliothek definiert ist) 
 
 void initCamera() {              // initialiesiert die Kamera 
-  normalspeed=15;                            // init Wert für die Augengeschwindigkeit
+  normalspeed=30;                            // init Wert für die Augengeschwindigkeit
   initauge = new PVector(2700, 2700, 1000);        // init Werte für die Augenposition
   initcenter = new PVector(0, 0, 0);                // init Wert für Die Szene der Kamera
   UPVec = new PVector(0, 0, -1);             // init für die Richtung die als oben erscheinen soll
@@ -34,6 +34,9 @@ void initCamera() {              // initialiesiert die Kamera
 void keyPressed() {        // reagiert auf Tastendrücke und verändert die Augenposition
   if (key == 'z'||key == 'Z') {
     zentrieren();
+  }
+  if (key == 't'||key == 'T') {
+    schrift = !schrift;
   }
   if (key == 'a'||key == 'A') {  
     speedeyeside = normalspeed;
@@ -123,7 +126,7 @@ void mouseMoved() {              // speichert Mausbewegung in rmx, rmy und setzt
 
 void zentrieren() {
   auge = initauge.copy();
-  
+
   float phi, deta;
   PVector richt, zentrum;
 

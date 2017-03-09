@@ -9,7 +9,7 @@ import java.awt.Robot;                  // Bibliothek um Mausposition zurückzus
 float eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ;
 float speedeyefront, speedeyeside, speedeyeUP, normalspeed;
 PVector richtung;
-PVector auge, UPVec;
+PVector auge, initauge, UPVec;
 PVector center, initcenter;
 float rmx, rmy;                  //mausposition
 int started=0;
@@ -17,9 +17,10 @@ Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in de
 
 void initCamera() {              // initialiesiert die Kamera 
   normalspeed=10;                            // init Wert für die Augengeschwindigkeit
-  auge = new PVector(1000, 1000, 1000);        // init Werte für die Augenposition
+  initauge = new PVector(2500, 2500, 1000);        // init Werte für die Augenposition
   initcenter = new PVector(0, 0, 0);                // init Wert für Die Szene der Kamera
   UPVec = new PVector(0, 0, -1);             // init für die Richtung die als oben erscheinen soll
+  auge = initauge.copy();
   noCursor();                                // deaktiviert den Curser
   try {                   
     robot = new Robot();                     // versucht Robot zu erstellen, wird benötigt um Maus in der Bildschirmmitte gefangen zu halten
@@ -124,6 +125,8 @@ void mouseMoved() {              // speichert Mausbewegung in rmx, rmy und setzt
 }
 
 void zentrieren() {
+  auge = initauge.copy();
+  
   float phi, deta;
   PVector richt, zentrum;
 

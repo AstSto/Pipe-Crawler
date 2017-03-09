@@ -3,8 +3,8 @@ ArrayList<RobPoint> points = new ArrayList<RobPoint>();
 PVector pos, dir;
 int i;
 
- void setup () {          // diese Funktion wird einmalig bei Start aufgerufen
-  fullScreen(P3D,1);        
+void setup () {          // diese Funktion wird einmalig bei Start aufgerufen
+  fullScreen(P3D, 1);        
   initCamera();            // initialiesiert die Camera
   colorMode(RGB, 1);
   pos = new PVector(0, 0, 0);     // initialiesiert den ersten Roboterpunkt (wird später überschrieben)
@@ -17,7 +17,10 @@ void draw () {            // wird regelmäßig automatisch aufgerufen
   lights();
   background(0);
   updateCamera();         // Aktualiesiert die Camera Position
-  coordAxis();            // zeichnet den Koordinaten Ursprung
+  //coordAxis();            // zeichnet den Koordinaten Ursprung
+  raster();                 // zeichnet ein Raster ein
+  
+  //translate(500,900,100);
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
   //box(100);
   //wurfel();
@@ -59,6 +62,7 @@ void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Ar
 
   //fill(0,0,1,0.1);                // hier kann Füllfarbe und Alpha wert eingestellt werden
   noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
+  //stroke(0);
   beginShape(QUADS);                            // es werden immer 4 Vertex Punkte zu einer Fläche zusammengefasst siehe PShape
   for (int i = 1; i < points.size(); i++) {
     RobPoint prevpoint = points.get(i-1);        // herausfinden des aktuellen und dem vorherigen Punkt
@@ -75,7 +79,7 @@ void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Ar
     xprev.normalize();
     yprev.normalize();
 
-    int anzEcken = 18;
+    int anzEcken = 180;
     for (int j = 0; j <= anzEcken; j ++) {          // hier werden nun j iteriert entspricht dem Winkel phi 
       PVector zw;
       float phi = (j*(360/anzEcken)*TWO_PI)/360;    // dem j entsprechendem Winkel z.B. mit anzEcken = 4 ist phi [0,90,180,270,360]
@@ -107,6 +111,29 @@ PVector Ecke(PVector posr, PVector x, PVector y, int r, float phi ) {
   return zwpos;
 }
 
+void raster() {
+
+  int max = 15;
+  int scl = 50;
+  for (int i = 0; i < max; i++ ) {
+    stroke(0, 0, 255);
+    line(i*scl, 0, 0, i*scl, 0, (max-1)*scl);
+    stroke(0, 255, 0);
+    line(i*scl, 0, 0, i*scl, (max-1)*scl, 0);
+  }
+  for (int i = 0; i < max; i++ ) {
+    stroke(0, 0, 255);
+    line(0, i*scl, 0, 0, i*scl, (max-1)*scl);
+    stroke(255, 0, 0);
+    line(0, i*scl, 0, (max-1)*scl, i*scl, 0);
+  }
+  for (int i = 0; i < max; i++ ) {
+    stroke(0, 255, 0);
+    line(0, 0, i*scl, 0, (max-1)*scl, i*scl);
+    stroke(255, 0, 0);
+    line(0, 0, i*scl, (max-1)*scl, 0, i*scl);
+  }
+}
 
 void wurfel () {                    // nur ein Beispiel welches die Funktion fill() und Vertex verdeutlicht
   beginShape(QUADS);

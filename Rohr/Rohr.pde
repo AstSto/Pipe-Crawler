@@ -18,7 +18,7 @@ void setup () {          // diese Funktion wird einmalig bei Start aufgerufen
 void draw () {            // wird regelmäßig automatisch aufgerufen
   lights();
   //background(139, 195, 74);    // Light Green
- // background(100, 181, 246);    // Light Blue
+  // background(100, 181, 246);    // Light Blue
  background(255,255,255);
   updateCamera();         // Aktualiesiert die Camera Position
   //coordAxis();            // zeichnet den Koordinaten Ursprung
@@ -27,7 +27,7 @@ void draw () {            // wird regelmäßig automatisch aufgerufen
   pushMatrix();
   translate(500, 1300, 100);
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
-  wurfel();
+  //wurfel();
   popMatrix();
   println(frameRate);
 }
@@ -67,7 +67,8 @@ void dirbestimmen() {                        // bestimmt zu jedem Rohrmittelpunk
 void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Arrayliste
 
   //fill(255);                // hier kann Füllfarbe und Alpha wert eingestellt werden
-  fill(205,91,69);
+   fill(205,91,69);
+  
   noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
   //stroke(0);
   beginShape(QUADS);                            // es werden immer 4 Vertex Punkte zu einer Fläche zusammengefasst siehe PShape
@@ -106,22 +107,24 @@ void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Ar
 
 
   // Start und Endpunkt beschriften:
-  pushMatrix();
-  fill(255, 0, 0);
-  rotateX(PI*3/2);        // dadurch: x' = x y'= -z z' = y
-  int x, y, z;
-  x=round(points.get(0).pos.x+points.get(0).rad);
-  y=-round(points.get(0).pos.z);
-  z=round(points.get(0).pos.y);
-  text("Start bei: "+points.get(0).pos, x, y, z);
-  x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
-  y=-round(points.get(points.size()-1).pos.z);
-  z=round(points.get(points.size()-1).pos.y);
-  text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
-  PVector resultat= points.get(points.size()-1).pos.copy();
-  resultat.sub(points.get(0).pos);
-  text("Resultierender Vektor : "+resultat, x, y+100, z);
-  popMatrix();
+  if (schrift) {
+    pushMatrix();
+    fill(255, 0, 0);
+    rotateX(PI*3/2);        // dadurch: x' = x y'= -z z' = y
+    int x, y, z;
+    x=round(points.get(0).pos.x+points.get(0).rad);
+    y=-round(points.get(0).pos.z);
+    z=round(points.get(0).pos.y);
+    text("Start bei: "+points.get(0).pos, x, y, z);
+    x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
+    y=-round(points.get(points.size()-1).pos.z);
+    z=round(points.get(points.size()-1).pos.y);
+    text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
+    PVector resultat= points.get(points.size()-1).pos.copy();
+    resultat.sub(points.get(0).pos);
+    text("Resultierender Vektor : "+resultat, x, y+100, z);
+    popMatrix();
+  }
 }
 
 PVector Ecke(PVector posr, PVector x, PVector y, int r, float phi ) {
@@ -135,129 +138,4 @@ PVector Ecke(PVector posr, PVector x, PVector y, int r, float phi ) {
   zwpos.add(zwy);
 
   return zwpos;
-}
-
-void raster() {
-
-  int max = 10;
-  int scl = 250;
-  fill(0);
-  stroke(0);
-  for (int i = 0; i < max; i++ ) {
-    //stroke(0, 0, 255);
-    line(i*scl, 0, 0, i*scl, 0, (max-1)*scl);
-    //stroke(0, 255, 0);
-    line(i*scl, 0, 0, i*scl, (max-1)*scl, 0);
-  }
-  for (int i = 0; i < max; i++ ) {
-    //stroke(0, 0, 255);
-    line(0, i*scl, 0, 0, i*scl, (max-1)*scl);
-    //stroke(255, 0, 0);
-    line(0, i*scl, 0, (max-1)*scl, i*scl, 0);
-  }
-  for (int i = 0; i < max; i++ ) {
-    //stroke(0, 255, 0);
-    line(0, 0, i*scl, 0, (max-1)*scl, i*scl);
-    //stroke(255, 0, 0);
-    line(0, 0, i*scl, (max-1)*scl, 0, i*scl);
-  }
-
-  // Achsenbeschriftung
-
-  pushMatrix();
-  rotateX(PI*3/2);
-  text("X-Achse", max*scl, 0, 0);
-  rotateY(PI/2);
-  text("Y-Achse", -max*scl-300, 0, 0);
-  popMatrix();
-
-  pushMatrix();
-  rotateX(PI*3/2);
-  text("Z-Achse", 0, -max*scl, 0);
-  popMatrix();
-
-
-  textSize(50);
-  pushMatrix();
-  rotateX(PI*3/2);
-  for (int i = 1; i < max; i++ ) {     // Achsen-Skala
-    // dadurch: x' = x y'= -z z' = y
-    text(i*scl, i*scl, 0, 0);        // x - Achse
-    text(i*scl, 0, -i*scl, 0);       // y - Achse
-    pushMatrix();
-    rotateY(PI/2);
-    text(i*scl, -i*scl, 0, 0);
-    popMatrix();
-  }
-  popMatrix();
-  textSize(80);
-}
-
-void wurfel () {                    // nur ein Beispiel welches die Funktion fill() und Vertex verdeutlicht
-  beginShape(QUADS);
-
-  fill(0, 255, 255); 
-  vertex(-100, 100, 100);
-  fill(255, 255, 255); 
-  vertex( 100, 100, 100);
-  fill(255, 0, 255); 
-  vertex( 100, -100, 100);
-  fill(0, 0, 255); 
-  vertex(-100, -100, 100);
-
-  fill(255, 255, 255); 
-  vertex( 100, 100, 100);
-  fill(255, 255, 0); 
-  vertex( 100, 100, -100);
-  fill(255, 0, 0); 
-  vertex( 100, -100, -100);
-  fill(255, 0, 255); 
-  vertex( 100, -100, 100);
-
-  fill(255, 255, 0); 
-  vertex( 100, 100, -100);
-  fill(0, 255, 0); 
-  vertex(-100, 100, -100);
-  fill(0, 0, 0); 
-  vertex(-100, -100, -100);
-  fill(255, 0, 0); 
-  vertex( 100, -100, -100);
-
-  fill(0, 255, 0); 
-  vertex(-100, 100, -100);
-  fill(0, 255, 255); 
-  vertex(-100, 100, 100);
-  fill(0, 0, 255); 
-  vertex(-100, -100, 100);
-  fill(0, 0, 0); 
-  vertex(-100, -100, -100);
-
-  fill(0, 255, 0); 
-  vertex(-100, 100, -100);
-  fill(255, 255, 0); 
-  vertex( 100, 100, -100);
-  fill(255, 255, 255); 
-  vertex( 100, 100, 100);
-  fill(0, 255, 255); 
-  vertex(-100, 100, 100);
-
-  fill(0, 0, 0); 
-  vertex(-100, -100, -100);
-  fill(255, 0, 0); 
-  vertex( 100, -100, -100);
-  fill(255, 0, 255); 
-  vertex( 100, -100, 100);
-  fill(0, 0, 255); 
-  vertex(-100, -100, 100);
-
-  endShape();
-}
-
-void coordAxis() {                // zeichnet Koordinatenursprung ein
-  stroke(255, 0, 0);
-  line(0, 0, 0, 100, 0, 0);
-  stroke(0, 255, 0);
-  line(0, 0, 0, 0, 100, 0);
-  stroke(0, 0, 255);
-  line(0, 0, 0, 0, 0, 100);
 }

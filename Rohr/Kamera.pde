@@ -35,6 +35,9 @@ void keyPressed() {        // reagiert auf Tastendrücke und verändert die Auge
   if (key == 'z'||key == 'Z') {
     zentrieren();
   }
+  if (key == 't'||key == 'T') {
+    schrift = !schrift;
+  }
   if (key == 'a'||key == 'A') {  
     speedeyeside = normalspeed;
   }
@@ -123,7 +126,7 @@ void mouseMoved() {              // speichert Mausbewegung in rmx, rmy und setzt
 
 void zentrieren() {
   auge = initauge.copy();
-  
+
   float phi, deta;
   PVector richt, zentrum;
 

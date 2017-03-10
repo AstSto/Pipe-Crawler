@@ -19,7 +19,7 @@ void draw () {            // wird regelmäßig automatisch aufgerufen
   lights();
   //background(139, 195, 74);    // Light Green
   // background(100, 181, 246);    // Light Blue
-  background(255, 255, 255);
+ background(255,255,255);
   updateCamera();         // Aktualiesiert die Camera Position
   //coordAxis();            // zeichnet den Koordinaten Ursprung
   raster();                 // zeichnet ein Raster ein
@@ -67,7 +67,8 @@ void dirbestimmen() {                        // bestimmt zu jedem Rohrmittelpunk
 void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Arrayliste
 
   //fill(255);                // hier kann Füllfarbe und Alpha wert eingestellt werden
-  fill(205, 91, 69);
+   fill(205,91,69);
+  
   noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
   //stroke(0);
   beginShape(QUADS);                            // es werden immer 4 Vertex Punkte zu einer Fläche zusammengefasst siehe PShape

@@ -2,7 +2,7 @@ import processing.serial.*;
 
 Serial myPort;
 float yaw, pitch, roll;
-String[] data = new String[6];
+String[] data = new String[3];
 
 void serialEvent (Serial myPort) {
   // get the ASCII string:
@@ -12,13 +12,13 @@ void serialEvent (Serial myPort) {
    if (inString != null)
    {
    try {
-   String[] data = splitTokens(inString, "/");
-    println("PITCH: "+data[0]);
-       pitch = float(data[0]);
-   println("YAW: "+data[1]);
-    println("ROLL"+data[2]);
-  yaw = float(data[1]);
-   roll = float(data[2]);
+   String[] data = splitTokens(inString, "q");
+    println("YAW: "+data[0]);
+       yaw = float(data[0]);
+   println("ROLL: "+data[1]);
+    println("PITCH"+data[2]);
+  roll = float(data[1]);
+   pitch = float(data[2]);
    } 
    catch (Exception e) {
    //

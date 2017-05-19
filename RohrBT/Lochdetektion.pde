@@ -27,9 +27,9 @@ void showValues() {
   textSize(70);
   textSize(40);
   textAlign(LEFT);
-  text("yaw "+yaw, 350, 300);
-  text("pitch "+pitch, 350, 400);
-  text("roll "+roll, 350, 500);
+  text("yaw "+round(yaw* 180 / 2), 350, 300);
+  text("pitch "+round(pitch* 180 / 2), 350, 400);
+  text("roll "+round(roll* 180 / 2), 350, 500);
   //
 } // func
 

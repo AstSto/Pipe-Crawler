@@ -53,15 +53,17 @@ void lochbestimmung() {
 
 
 
-void kreuz(int x, int y, int z) {       //bekommt Mittelpunkt des Kreuzes übermittelt
+void kreuz() {       //bekommt Winkel des Lochs übertragen
   strokeWeight(4);
   stroke(0, 0, 255);
   // stroke (255,153,0); //orange
   // stroke (153,0,204); //lila
   pushMatrix();
-  rotateX(PI*3/2);      //(wäre in x-z-Ebene)
-  line (x-20, y, z-20, x+20, y, z+20);
-  line (x, y-20, z-20, x, y+20, z+20);
+  translate(-pos.x, -pos.y, -pos.z); //schiebt es in den Mittelpunkt
+  //dir auf x-Achse
+  //rotate();
+  //line (x-20, y, z-20, x+20, y, z+20);
+  //line (x, y-20, z-20, x, y+20, z+20);
   strokeWeight(1);
   popMatrix();
 }

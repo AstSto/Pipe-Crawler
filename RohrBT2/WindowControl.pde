@@ -5,7 +5,7 @@ final int stateSeeAnalysis           = 2;
 final int stateLochdetektion         = 3;
 char msgArduino                      = 0;
 int state = stateMenu;              //default screen
-
+boolean connected;
 PFont font;
 
 // ----------------------------------------------------------------------
@@ -23,16 +23,23 @@ void setup()
   //textFont(font);
 
   //bluetooth--------------------------------------------------------------------------------------------
-  myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
-  // A serialEvent() is generated when a newline character is received :
-  myPort.bufferUntil('\n');
+  try {                   
+    myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
+    // A serialEvent() is generated when a newline character is received :
+    myPort.bufferUntil('\n');
+    connected = true;
+  }  
+  catch(Throwable e) {
+    connected = false;
+  }
+
 
 
   initCamera();            // initialisiert die Camera
 
   pos = new PVector(0, 0, 0);     // initialisiert den ersten Roboterpunkt (wird später überschrieben)
   dir = new PVector(1, 0, 0);
-  roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
+  //roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
 } //setup
 
 int oldState = -1;

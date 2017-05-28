@@ -13,6 +13,7 @@ PVector auge, initauge, UPVec;
 PVector center, initcenter;
 float rmx, rmy;                  //mausposition
 int started=0;
+boolean showText = true;
 Robot robot;                      //robot Objekt vom Typ Robot(Klasse, die in der Bibliothek definiert ist) 
 
 void initCamera() {              // initialiesiert die Kamera 
@@ -46,6 +47,9 @@ void keyPressedCamera() {        // reagiert auf Tastendrücke und verändert di
   }
   if (key == 'd'||key == 'D') {
     speedeyeside = -normalspeed;
+  }
+  if (key == 't'||key == 'T') {
+    showText = !showText;
   }
 
   if (key == ' ') {

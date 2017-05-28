@@ -10,38 +10,80 @@ void drawRobot () {            // wird regelmäßig automatisch aufgerufen
   //background(139, 195, 74);    // Light Green
   // background(100, 181, 246);    // Light Blue
   background(255, 255, 255);
+  roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
   updateCamera();         // Aktualiesiert die Camera Position
-  //coordAxis();            // zeichnet den Koordinaten Ursprung
-  raster();                 // zeichnet ein Raster ein
-
+  coordAxis();            // zeichnet den Koordinaten Ursprung
+  raster();      // zeichnet ein Raster ein
+  
   pushMatrix();              //speichert derzeitiges Koordinatensystem
-  translate(500, 1300, 100);        //AUSKOMMENTIEREN BEI ANWENDUNG
- // kreuz(300, 300, 300);
+  translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
+  lochzeichnen();
   popMatrix();
-  println(frameRate);
+  
+  //println(frameRate);
 }  //drawRobot
 
 void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
-  PVector sp;                    // anstatt von Simulierten Werten hier die echten Roboterpositionen verwenden!!!
-  pos = new PVector(0, 0, 0);
-  for (int i = 0; i<10; i++) {
-    pos = new PVector(300*cos(i*20*TWO_PI/360), 300*sin(i*20*TWO_PI/360), 0);
+  /*PVector sp;                    // anstatt von Simulierten Werten hier die echten Roboterpositionen verwenden!!!
+   pos = new PVector(0, 0, 0);
+   for (int i = 0; i<10; i++) {
+   pos = new PVector(300*cos(i*20*TWO_PI/360), 300*sin(i*20*TWO_PI/360), 0);
+   points.add(new RobPoint(pos, 100));                                        // in die Liste points werden Objekte( mit Rohrmittelpunkt und Radius) gespeichert
+   }
+   for (int i = 1; i<10; i++) {                                   // mehrere Beispielhafte Punkte
+   pos.y -= i*20;
+   points.add(new RobPoint(pos, 100));
+   }
+   sp = pos.copy();
+   for (int i = 1; i<7; i++)
+   {
+   pos.x = sp.x;
+   pos.y = sp.y-400*sin(i*10*TWO_PI/360);
+   pos.z = sp.z+400-400*cos(i*10*TWO_PI/360);
+   points.add(new RobPoint(pos, 100));
+   }*/
+
+  float ds; // delta Strecke des Motor - Encoders
+  float beta; // Winkel der vom Senorkranz  kommt
+  float teta, phi;
+  PVector dVec;
+
+  //******************************************
+  //hier werden die Werte der Sensoren gefüllt (da ich ja kein Bluetooth benutzen kann ;) )
+  //******************************************
+  ds = 10;
+  phi = 70 *TWO_PI/360;
+  teta = 70*TWO_PI/360;
+
+  float x, y, z;
+
+  // Umrechnung der Kugelkoordinaten in karthesische Koordinaten
+  x = ds * sin(teta)*cos(phi);
+  y = ds * sin(teta)*sin(phi);
+  z = ds * cos(teta);
+
+  dVec = new PVector(x, y, z);
+  pos.add(dVec);
+  if (frameCount<200) {
     points.add(new RobPoint(pos, 100));                                        // in die Liste points werden Objekte( mit Rohrmittelpunkt und Radius) gespeichert
   }
-  for (int i = 1; i<10; i++) {                                   // mehrere Beispielhafte Punkte
-    pos.y -= i*20;
-    points.add(new RobPoint(pos, 100));
-  }
-  sp = pos.copy();
-  for (int i = 1; i<7; i++)
-  {
-    pos.x = sp.x;
-    pos.y = sp.y-400*sin(i*10*TWO_PI/360);
-    pos.z = sp.z+400-400*cos(i*10*TWO_PI/360);
-    points.add(new RobPoint(pos, 100));
-  }
   dirbestimmen();        // bestimmt zu jedem Rohrmittelpunkt die Richtung in die dieser "schaut"
+
+  // falls Loch gefunden wird: (hier noch zufällig)
+  if (points.size() == 20) {
+    RobPoint point;
+    point =  points.get(points.size()-4);
+    point.loch = true;
+    point.lochwinkel = 40 * TWO_PI / 360;
+  }
+
+  if (points.size() == 40) {
+    RobPoint point;
+    point =  points.get(points.size()-4);
+    point.loch = true;
+    point.lochwinkel = 0 * TWO_PI / 360;
+  }
 }
 
 void dirbestimmen() {                        // bestimmt zu jedem Rohrmittelpunkt die Richtung in die dieser "schaut"
@@ -56,7 +98,7 @@ void dirbestimmen() {                        // bestimmt zu jedem Rohrmittelpunk
 
 void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Arrayliste
 
-  //fill(255);                // hier kann Füllfarbe und Alpha wert eingestellt werden
+  //fill(120);                // hier kann Füllfarbe und Alpha wert eingestellt werden
   fill(205, 91, 69);
   noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
   //stroke(0);
@@ -96,25 +138,27 @@ void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Ar
 
 
   // Start und Endpunkt beschriften:
-  pushMatrix();
-  fill(255, 0, 0);
-  rotateX(PI*3/2);        // 270° dadurch: x' = x y'= -z z' = y  (damit Schrift in x-z-Ebene statt x-y-Ebene liegt)
-  int x, y, z;
-  x=round(points.get(0).pos.x+points.get(0).rad);   
-  y=-round(points.get(0).pos.z);
-  z=round(points.get(0).pos.y);
-  text("Start bei: "+points.get(0).pos, x, y, z);              //Startpunkt der Schrift
-  x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
-  y=-round(points.get(points.size()-1).pos.z);
-  z=round(points.get(points.size()-1).pos.y);
-  text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
-  PVector resultat= points.get(points.size()-1).pos.copy();
-  resultat.sub(points.get(0).pos);
-  text("Resultierender Vektor : "+resultat, x, y+100, z);
-  popMatrix();
+  if (showText) {
+    pushMatrix();
+    fill(255, 0, 0);
+    rotateX(PI*3/2);        // 270° dadurch: x' = x y'= -z z' = y  (damit Schrift in x-z-Ebene statt x-y-Ebene liegt)
+    int x, y, z;
+    x=round(points.get(0).pos.x+points.get(0).rad);   
+    y=-round(points.get(0).pos.z);
+    z=round(points.get(0).pos.y);
+    text("Start bei: "+points.get(0).pos, x, y, z);              //Startpunkt der Schrift
+    x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
+    y=-round(points.get(points.size()-1).pos.z);
+    z=round(points.get(points.size()-1).pos.y);
+    text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
+    PVector resultat= points.get(points.size()-1).pos.copy();
+    resultat.sub(points.get(0).pos);
+    text("Resultierender Vektor : "+resultat, x, y+100, z);
+    popMatrix();
+  }
 }
 
-PVector Ecke(PVector posr, PVector x, PVector y, int r, float phi ) {
+PVector Ecke(PVector posr, PVector x, PVector y, float r, float phi ) {
   PVector zwpos, zwx, zwy;
   zwpos = posr.copy();
   zwx= x.copy();
@@ -153,42 +197,99 @@ void raster() {
   }
 
   // Achsenbeschriftung
-
-  pushMatrix();
-  rotateX(PI*3/2);
-  text("X-Achse", max*scl, 0, 0);
-  rotateY(PI/2);
-  text("Y-Achse", -max*scl-300, 0, 0);
-  popMatrix();
-
-  pushMatrix();
-  rotateX(PI*3/2);
-  text("Z-Achse", 0, -max*scl, 0);
-  popMatrix();
-
-
-  textSize(50);
-  pushMatrix();
-  rotateX(PI*3/2);
-  for (int i = 1; i < max; i++ ) {     // Achsen-Skala      Werte (zB 250) erst an x,y,z, dann nächster Wert an x,y,z etc
-    // dadurch: x' = x y'= -z z' = y
-    text(i*scl, i*scl, 0, 0);        // x - Achse
-    text(i*scl, 0, -i*scl, 0);       // y - Achse
+  if (showText) {
     pushMatrix();
+    rotateX(PI*3/2);
+    text("X-Achse", max*scl, 0, 0);
     rotateY(PI/2);
-    text(i*scl, -i*scl, 0, 0);
+    text("Y-Achse", -max*scl-300, 0, 0);
     popMatrix();
+
+    pushMatrix();
+    rotateX(PI*3/2);
+    text("Z-Achse", 0, -max*scl, 0);
+    popMatrix();
+
+
+    textSize(50);
+    pushMatrix();
+    rotateX(PI*3/2);
+    for (int i = 1; i < max; i++ ) {     // Achsen-Skala      Werte (zB 250) erst an x,y,z, dann nächster Wert an x,y,z etc
+      // dadurch: x' = x y'= -z z' = y
+      text(i*scl, i*scl, 0, 0);        // x - Achse
+      text(i*scl, 0, -i*scl, 0);       // y - Achse
+      pushMatrix();
+      rotateY(PI/2);
+      text(i*scl, -i*scl, 0, 0);
+      popMatrix();
+    }
+    popMatrix();
+    textSize(80);
   }
-  popMatrix();
-  textSize(80);
 }
 
+void lochzeichnen() {           // zeichnet alle Löcher
+  for (RobPoint point : points) {      // FOR EACH Schleife
+    if (point.loch) {              // falls ein Loch erkannt wurde
+
+
+
+      PVector xnew, ynew, z, up, lochpos, nullvec, zw, lochv, xkreuz, ykreuz;
+      nullvec = new PVector (0, 0, 0);
+      up = new PVector(0, 0, 1);
+      z = point.dir;
+      ynew = up.cross(z);            // neue Y-Achse 
+      ynew.normalize();
+      xnew = z.cross(ynew);          // neue X-Achse  jeweils zum bestimmen der Lochposition
+      xnew.normalize();
+      lochpos = Ecke(point.pos, xnew, ynew, point.rad, point.lochwinkel).copy();
+      
+      // neues Koordinatensystem das Tagential an das Rohr liegt
+      lochv = lochpos.copy();
+      lochv.sub(point.pos);
+      lochv.normalize();
+      ykreuz = up.cross(lochv);
+      ykreuz.normalize();
+      xkreuz = lochv.cross(ykreuz);
+      xkreuz.normalize();
+
+      fill(255, 0, 0);
+
+      // zeichnen des Kreuzes 
+      pushMatrix();
+      translate(lochpos.x, lochpos.y, lochpos.z);
+      beginShape();
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(10)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(170)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(190)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(-10)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      endShape(CLOSE);
+
+      beginShape();
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(80)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(100)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(260)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      zw = Ecke(nullvec, xkreuz, ykreuz, point.rad, radians(280)).copy(); 
+      vertex(zw.x, zw.y, zw.z);
+      endShape(CLOSE);
+
+      popMatrix();
+    }
+  }
+}
 
 void coordAxis() {                // zeichnet Koordinatenursprung ein
   stroke(255, 0, 0);
-  line(0, 0, 0, 100, 0, 0);
+  line(0, 0, 0, 500, 0, 0);
   stroke(0, 255, 0);
-  line(0, 0, 0, 0, 100, 0);
+  line(0, 0, 0, 0, 500, 0);
   stroke(0, 0, 255);
-  line(0, 0, 0, 0, 0, 100);
+  line(0, 0, 0, 0, 0, 500);
 } 

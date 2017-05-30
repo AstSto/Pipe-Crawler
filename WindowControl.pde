@@ -22,15 +22,15 @@ void setup()
   //textFont(font);
 
   //bluetooth--------------------------------------------------------------------------------------------
- // try {                   
-    myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
-    // A serialEvent() is generated when a newline character is received :
-    myPort.bufferUntil('\n');
-    connected = true;
-/*  }  
-  catch(Throwable e) {
-    connected = false;
-  }*/
+  // try {                   
+  myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
+  // A serialEvent() is generated when a newline character is received :
+  myPort.bufferUntil('\n');
+  connected = true;
+  /*  }  
+   catch(Throwable e) {
+   connected = false;
+   }*/
 
 
 
@@ -38,20 +38,20 @@ void setup()
 
   pos = new PVector(0, 0, 0);     // initialisiert den ersten Roboterpunkt (wird später überschrieben)
   dir = new PVector(1, 0, 0);
-  
+
   //roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
 } //setup
 
 int oldState = -1;
 void draw()
 {
- /* if(frameCount % 1000==0 && connected==false);    //versucht sich solange zu verbinden
-  {
-     myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
-    // A serialEvent() is generated when a newline character is received :
-    myPort.bufferUntil('\n');
-    connected = true;
-  }*/
+  /* if(frameCount % 1000==0 && connected==false);    //versucht sich solange zu verbinden
+   {
+   myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
+   // A serialEvent() is generated when a newline character is received :
+   myPort.bufferUntil('\n');
+   connected = true;
+   }*/
   // the main routine handels the states
   if (state != oldState) {
     //println("new State = " + state);
@@ -117,6 +117,7 @@ void keyPressedForStateMenu() {
     break;
   case 'n':
     msgArduino=5;
+    myPort.write('5');
     break;
   }// switch
 } // func
@@ -136,21 +137,26 @@ void keyPressedForStateSeeControl() {
     break;
   case '1':
     msgArduino=1;
+    myPort.write('1');
     //sendToArduino();
     break;  
   case '2':
     msgArduino=2;
-    //sendToArduino();
+    myPort.write('2');
+    stop=false;
     break;  
   case '3':
     msgArduino=3;
+    myPort.write('3');
     //sendToArduino();
     break;
   case '4':
     msgArduino=4;
+    myPort.write('4');
     break;
   case 'n':
     msgArduino=5;
+    myPort.write('5');
     init=false;
     break;
   default:
@@ -172,9 +178,16 @@ void keyPressedForStateSeeAnalysis() {
   case '9':
     state = stateLochdetektion;
     break;
+  case '2':
+    msgArduino=2;
+    myPort.write('2');
+    stop=false;
+    break; 
   case 'n':
     msgArduino=5;
+    myPort.write('5');
     init=false;
+    stop=true;
     break;
   default:
     // do nothing
@@ -196,6 +209,7 @@ void keyPressedForLochdetektion() {
     break;
   case 'n':
     msgArduino=5;
+    myPort.write('5');
     break;
   default:
     // do nothing

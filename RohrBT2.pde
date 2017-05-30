@@ -11,18 +11,22 @@ int i;
 float x=0;
 float y=0;
 float z=0;
+boolean stop=false;
 
 
 void drawRobot () {            // wird regelmäßig automatisch aufgerufen
   lights();
   background(255, 255, 255);
+  
+  if (stop==false){
   roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
+  }
   updateCamera();         // Aktualiesiert die Camera Position
   coordAxis();            // zeichnet den Koordinaten Ursprung
   raster();      // zeichnet ein Raster ein
 
   pushMatrix();              //speichert derzeitiges Koordinatensystem
- // translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
+  // translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
   lochzeichnen();
   popMatrix();
@@ -42,7 +46,7 @@ void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte i
   println("pitch: "+pitch);
   println("roll: "+roll);
   println("yaw: "+yaw);
-  
+
   teta=roll;
   phi=yaw-phiinit;
   ds=distance;
@@ -93,63 +97,64 @@ void dirbestimmen() {                        // bestimmt zu jedem Rohrmittelpunk
 }
 
 void rohrzeichnen() {              // zeichnet das Rohr auf der Grundlage der Arrayliste
-  fill(205, 91, 69);
-  noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
-  //stroke(0);
-  beginShape(QUADS);                            // es werden immer 4 Vertex Punkte zu einer Fläche zusammengefasst siehe PShape
-  for (int i = 1; i < points.size(); i++) {
-    RobPoint prevpoint = points.get(i-1);        // herausfinden des aktuellen und dem vorherigen Punkt
-    RobPoint newpoint = points.get(i);          
-    PVector xnew, ynew, xprev, yprev, up;
-    up = new PVector(0, 0, 1);
-    up.normalize();
-    xnew = up.cross(newpoint.dir);            // neue X-Achse für newpoint, wird später benötigt um einen Kreis um den Mittelpunkt zu berechnen
-    ynew = xnew.cross(newpoint.dir);          // neue Y-Achse für newpoint (Z-Achse dir Vektor)
-    xnew.normalize();
-    ynew.normalize();
-    xprev = up.cross(prevpoint.dir);          // neue X-Achse des alten Punktes
-    yprev = xprev.cross(prevpoint.dir);      // neue Y-Achse des alten Punktes
-    xprev.normalize();
-    yprev.normalize();
+    fill(205, 91, 69);
+    noStroke();                       // Ecklinien nicht mit zeichnen --> erhöht Performance deutlich
+    //stroke(0);
+    beginShape(QUADS);                            // es werden immer 4 Vertex Punkte zu einer Fläche zusammengefasst siehe PShape
+    for (int i = 1; i < points.size(); i++) {
+      RobPoint prevpoint = points.get(i-1);        // herausfinden des aktuellen und dem vorherigen Punkt
+      RobPoint newpoint = points.get(i);          
+      PVector xnew, ynew, xprev, yprev, up;
+      up = new PVector(0, 0, 1);
+      up.normalize();
+      xnew = up.cross(newpoint.dir);            // neue X-Achse für newpoint, wird später benötigt um einen Kreis um den Mittelpunkt zu berechnen
+      ynew = xnew.cross(newpoint.dir);          // neue Y-Achse für newpoint (Z-Achse dir Vektor)
+      xnew.normalize();
+      ynew.normalize();
+      xprev = up.cross(prevpoint.dir);          // neue X-Achse des alten Punktes
+      yprev = xprev.cross(prevpoint.dir);      // neue Y-Achse des alten Punktes
+      xprev.normalize();
+      yprev.normalize();
 
-    int anzEcken = 180;                              //(bei 4 wäre das Rohr rechteckig)
-    for (int j = 0; j <= anzEcken; j ++) {          // hier werden nun j iteriert entspricht dem Winkel phi 
-      PVector zw;                                    //(Zwischenspeicher)
-      float phi = (j*(360/anzEcken)*TWO_PI)/360;    // dem j (Eckpunkt) entsprechendem Winkel in rad z.B. mit anzEcken = 4 ist phi [0,90,180,270,360]
+      int anzEcken = 180;                              //(bei 4 wäre das Rohr rechteckig)
+      for (int j = 0; j <= anzEcken; j ++) {          // hier werden nun j iteriert entspricht dem Winkel phi 
+        PVector zw;                                    //(Zwischenspeicher)
+        float phi = (j*(360/anzEcken)*TWO_PI)/360;    // dem j (Eckpunkt) entsprechendem Winkel in rad z.B. mit anzEcken = 4 ist phi [0,90,180,270,360]
 
 
-      zw = Ecke(newpoint.pos, xnew, ynew, newpoint.rad, phi);  // function Ecke bestimmt den Eckpunkt aus dem Mittelpunkt, dessen x,y Achse, dem Radius und dem Winkel
-      vertex(zw.x, zw.y, zw.z);                                // der 1. Punkt der Rechteckigen Fläche
-      zw = Ecke(newpoint.pos, xnew, ynew, newpoint.rad, phi+((360/anzEcken)*TWO_PI)/360);      //springt zum nächsten Eckpunkt durch phi+...
-      vertex(zw.x, zw.y, zw.z);
-      zw = Ecke(prevpoint.pos, xprev, yprev, prevpoint.rad, phi+((360/anzEcken)*TWO_PI)/360);
-      vertex(zw.x, zw.y, zw.z);
-      zw = Ecke(prevpoint.pos, xprev, yprev, prevpoint.rad, phi);
-      vertex(zw.x, zw.y, zw.z);                                        // nach dem 4. Punkt ist die Fläche komplett und der 5. beginnt automatisch eine neue Fläche
+        zw = Ecke(newpoint.pos, xnew, ynew, newpoint.rad, phi);  // function Ecke bestimmt den Eckpunkt aus dem Mittelpunkt, dessen x,y Achse, dem Radius und dem Winkel
+        vertex(zw.x, zw.y, zw.z);                                // der 1. Punkt der Rechteckigen Fläche
+        zw = Ecke(newpoint.pos, xnew, ynew, newpoint.rad, phi+((360/anzEcken)*TWO_PI)/360);      //springt zum nächsten Eckpunkt durch phi+...
+        vertex(zw.x, zw.y, zw.z);
+        zw = Ecke(prevpoint.pos, xprev, yprev, prevpoint.rad, phi+((360/anzEcken)*TWO_PI)/360);
+        vertex(zw.x, zw.y, zw.z);
+        zw = Ecke(prevpoint.pos, xprev, yprev, prevpoint.rad, phi);
+        vertex(zw.x, zw.y, zw.z);                                        // nach dem 4. Punkt ist die Fläche komplett und der 5. beginnt automatisch eine neue Fläche
+      }
     }
-  }
-  endShape();        // beendet alle Flächen
+    endShape();        // beendet alle Flächen
 
 
-  // Start und Endpunkt beschriften:
-  if (showText) {
-    pushMatrix();
-    fill(255, 0, 0);
-    rotateX(PI*3/2);        // 270° dadurch: x' = x y'= -z z' = y  (damit Schrift in x-z-Ebene statt x-y-Ebene liegt)
-    int x, y, z;
-    x=round(points.get(0).pos.x+points.get(0).rad);   
-    y=-round(points.get(0).pos.z);
-    z=round(points.get(0).pos.y);
-    text("Start bei: "+points.get(0).pos, x, y, z);              //Startpunkt der Schrift
-    x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
-    y=-round(points.get(points.size()-1).pos.z);
-    z=round(points.get(points.size()-1).pos.y);
-    text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
-    PVector resultat= points.get(points.size()-1).pos.copy();
-    resultat.sub(points.get(0).pos);
-    text("Resultierender Vektor : "+resultat, x, y+100, z);
-    popMatrix();
-  }
+    // Start und Endpunkt beschriften:
+    if (showText) {
+      pushMatrix();
+      fill(255, 0, 0);
+      rotateX(PI*3/2);        // 270° dadurch: x' = x y'= -z z' = y  (damit Schrift in x-z-Ebene statt x-y-Ebene liegt)
+      int x, y, z;
+      x=round(points.get(0).pos.x+points.get(0).rad);   
+      y=-round(points.get(0).pos.z);
+      z=round(points.get(0).pos.y);
+      text("Start bei: "+points.get(0).pos, x, y, z);              //Startpunkt der Schrift
+      x= round(points.get(points.size()-1).pos.x+points.get(points.size()-1).rad);
+      y=-round(points.get(points.size()-1).pos.z);
+      z=round(points.get(points.size()-1).pos.y);
+      text("Ende bei: "+points.get(points.size()-1).pos, x, y, z);
+      PVector resultat= points.get(points.size()-1).pos.copy();
+      resultat.sub(points.get(0).pos);
+      text("Resultierender Vektor : "+resultat, x, y+100, z);
+      popMatrix();
+    }
+  
 }
 
 PVector Ecke(PVector posr, PVector x, PVector y, float r, float phi ) {

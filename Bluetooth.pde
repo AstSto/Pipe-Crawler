@@ -20,7 +20,7 @@ void serialEvent (Serial myPort) {
       if (inString.equals("A")) {
         myPort.clear();
         firstContact = true;
-        myPort.write("A");
+        myPort.write('4');
         println("contact");
       }
     } else {
@@ -51,16 +51,16 @@ void serialEvent (Serial myPort) {
       // LIEST Daten ein
       try {
         String[] data = splitTokens(inString, "q");
-        println("YAW: "+data[0]);
+       // println("YAW: "+data[0]);
         yaw = float(data[0]);
-        println("ROLL: "+data[1]);
-        println("PITCH: "+data[2]);
+      //  println("ROLL: "+data[1]);
+      //  println("PITCH: "+data[2]);
         roll = float(data[1]);
         pitch = float(data[2]);
         distance = float(data[3]);
         hole = float(data[4]);
-        println("distance: "+data[3]);
-        println("hole: "+data[4]);
+       // println("distance: "+data[3]);
+      //  println("hole: "+data[4]);
        
       } //try
       catch (Exception e) {

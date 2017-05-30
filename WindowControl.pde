@@ -22,15 +22,15 @@ void setup()
   //textFont(font);
 
   //bluetooth--------------------------------------------------------------------------------------------
-  try {                   
+ // try {                   
     myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
     // A serialEvent() is generated when a newline character is received :
     myPort.bufferUntil('\n');
     connected = true;
-  }  
+/*  }  
   catch(Throwable e) {
     connected = false;
-  }
+  }*/
 
 
 
@@ -38,12 +38,20 @@ void setup()
 
   pos = new PVector(0, 0, 0);     // initialisiert den ersten Roboterpunkt (wird später überschrieben)
   dir = new PVector(1, 0, 0);
+  
   //roboterposfullen();              // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
 } //setup
 
 int oldState = -1;
 void draw()
 {
+ /* if(frameCount % 1000==0 && connected==false);    //versucht sich solange zu verbinden
+  {
+     myPort = new Serial(this, "COM5", 9600); // port used by bluetooth shield
+    // A serialEvent() is generated when a newline character is received :
+    myPort.bufferUntil('\n');
+    connected = true;
+  }*/
   // the main routine handels the states
   if (state != oldState) {
     //println("new State = " + state);
@@ -143,6 +151,7 @@ void keyPressedForStateSeeControl() {
     break;
   case 'n':
     msgArduino=5;
+    init=false;
     break;
   default:
     // do nothing
@@ -165,6 +174,7 @@ void keyPressedForStateSeeAnalysis() {
     break;
   case 'n':
     msgArduino=5;
+    init=false;
     break;
   default:
     // do nothing

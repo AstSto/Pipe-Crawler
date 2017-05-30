@@ -21,52 +21,51 @@ void serialEvent (Serial myPort) {
         myPort.clear();
         firstContact = true;
         myPort.write('4');
+        myPort.clear();
         println("contact");
       }
     } else {
-      
+
       //Kontakt hergestellt, SENDET
       println(inString);
-      if (msgArduino!=oldMessage) 
-      {                          
-        if (msgArduino==1) {
-          myPort.write('1');
-        }
-        if (msgArduino==2) {
-          myPort.write('2');
-        }
-        if (msgArduino==3) {
-          myPort.write('3');
-        }
-        if (msgArduino==4) {
-          myPort.write('4');
-        }
-        if (msgArduino==5) {
-          myPort.write('5');
-        }
-        oldMessage=msgArduino;
-      }
+      /* if (msgArduino!=oldMessage) 
+       {                          
+       if (msgArduino==1) {
+       myPort.write('1');
+       }
+       if (msgArduino==2) {
+       myPort.write('2');
+       }
+       if (msgArduino==3) {
+       myPort.write('3');
+       }
+       if (msgArduino==4) {
+       myPort.write('4');
+       }
+       if (msgArduino==5) {
+       myPort.write('5');
+       }
+       oldMessage=msgArduino;
+       }*/
+    }
 
-
-      // LIEST Daten ein
-      try {
-        String[] data = splitTokens(inString, "q");
-       // println("YAW: "+data[0]);
-        yaw = float(data[0]);
+    // LIEST Daten ein
+    try {
+      String[] data = splitTokens(inString, "q");
+      // println("YAW: "+data[0]);
+      yaw = round((float(data[0]))* PI);
       //  println("ROLL: "+data[1]);
       //  println("PITCH: "+data[2]);
-        roll = float(data[1]);
-        pitch = float(data[2]);
-        distance = float(data[3]);
-        hole = float(data[4]);
-       // println("distance: "+data[3]);
+      pitch = round((float(data[1]))* PI);
+      roll = round((float(data[2]))* PI);
+      distance = round((float(data[3]))/360*54*PI);
+      hole = float(data[4]);
+      // println("distance: "+data[3]);
       //  println("hole: "+data[4]);
-       
-      } //try
-      catch (Exception e) {
-        e.printStackTrace();
-      }//catch
-    }
+    } //try
+    catch (Exception e) {
+      e.printStackTrace();
+    }//catch
   }
 }
 

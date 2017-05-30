@@ -1,6 +1,6 @@
 ArrayList<RobPoint> points = new ArrayList<RobPoint>();
 boolean init = false;
-float ds; // delta Strecke des Motor - Encoders
+float ds=0; // delta Strecke des Motor - Encoders
 float beta; // Winkel der vom Senorkranz  kommt
 float teta;
 float phi=0;
@@ -8,6 +8,10 @@ float phiinit=0;
 PVector dVec;
 PVector pos, dir;
 int i;
+float x=0;
+float y=0;
+float z=0;
+
 
 void drawRobot () {            // wird regelmäßig automatisch aufgerufen
   lights();
@@ -18,7 +22,7 @@ void drawRobot () {            // wird regelmäßig automatisch aufgerufen
   raster();      // zeichnet ein Raster ein
 
   pushMatrix();              //speichert derzeitiges Koordinatensystem
-  translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
+ // translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
   lochzeichnen();
   popMatrix();
@@ -34,16 +38,14 @@ void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte i
     phiinit=yaw;
     init = true;
   }
-  yaw=round(yaw* 180/2);
-  pitch=round(pitch* 180/2);
-  roll=round(roll* 180/2);
+
   println("pitch: "+pitch);
   println("roll: "+roll);
   println("yaw: "+yaw);
   
   teta=roll;
   phi=yaw-phiinit;
-  ds=distance/360*54*PI;    //von Inkrementalgeber (nun in mm)
+  ds=distance;
   println(ds);
 
   //******************************************
@@ -53,12 +55,10 @@ void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte i
    phi = 70 *TWO_PI/360;
    teta = 70*TWO_PI/360;*/
 
-  float x, y, z;
-
   // Umrechnung der Kugelkoordinaten in karthesische Koordinaten
-  x = ds * sin(teta)*cos(phi);
-  y = ds * sin(teta)*sin(phi);
-  z = ds * cos(teta);
+  x = ds * cos(teta)*cos(phi);
+  y = ds * cos(teta)*sin(phi);
+  z = ds * sin(teta);
 
   dVec = new PVector(x, y, z);
   pos.add(dVec);

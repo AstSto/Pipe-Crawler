@@ -1,5 +1,11 @@
 ArrayList<RobPoint> points = new ArrayList<RobPoint>();
-
+boolean init = false;
+float ds; // delta Strecke des Motor - Encoders
+float beta; // Winkel der vom Senorkranz  kommt
+float teta;
+float phi=0;
+float phiinit=0;
+PVector dVec;
 PVector pos, dir;
 int i;
 
@@ -10,36 +16,43 @@ void drawRobot () {            // wird regelmäßig automatisch aufgerufen
   updateCamera();         // Aktualiesiert die Camera Position
   coordAxis();            // zeichnet den Koordinaten Ursprung
   raster();      // zeichnet ein Raster ein
-  
+
   pushMatrix();              //speichert derzeitiges Koordinatensystem
   translate(500, 2500, 500);        //AUSKOMMENTIEREN BEI ANWENDUNG
   rohrzeichnen();          // zeichnet das Rohr auf der Grundlage der Arrayliste
   lochzeichnen();
   popMatrix();
-  
+
   //println(frameRate);
 }  //drawRobot
 
 
 void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte in eine ArrayListe umgewandelt
 
-  float ds; // delta Strecke des Motor - Encoders
-  float beta; // Winkel der vom Senorkranz  kommt
-  float teta, phi;
-  PVector dVec;
+
+  if (init==false) {
+    phiinit=yaw;
+    init = true;
+  }
+  yaw=round(yaw* 180/2);
+  pitch=round(pitch* 180/2);
+  roll=round(roll* 180/2);
+  println("pitch: "+pitch);
+  println("roll: "+roll);
+  println("yaw: "+yaw);
   
-  teta=pitch;
-  phi=yaw;
-  ds=distance/360*5.4*PI;    //von Inkrementalgeber (nun in cm)
+  teta=roll;
+  phi=yaw-phiinit;
+  ds=distance/360*54*PI;    //von Inkrementalgeber (nun in mm)
   println(ds);
 
   //******************************************
   //hier werden die Werte der Sensoren gefüllt 
   //******************************************
   /*ds = 10;
-  phi = 70 *TWO_PI/360;
-  teta = 70*TWO_PI/360;*/
-  
+   phi = 70 *TWO_PI/360;
+   teta = 70*TWO_PI/360;*/
+
   float x, y, z;
 
   // Umrechnung der Kugelkoordinaten in karthesische Koordinaten
@@ -49,6 +62,7 @@ void roboterposfullen() {        // hier werden die Eigentlichen Roboterpunkte i
 
   dVec = new PVector(x, y, z);
   pos.add(dVec);
+  points.add(new RobPoint(pos, 100)); 
 
   dirbestimmen();        // bestimmt zu jedem Rohrmittelpunkt die Richtung in die dieser "schaut"
 
@@ -223,7 +237,7 @@ void lochzeichnen() {           // zeichnet alle Löcher
       xnew = z.cross(ynew);          // neue X-Achse  jeweils zum bestimmen der Lochposition
       xnew.normalize();
       lochpos = Ecke(point.pos, xnew, ynew, point.rad, point.lochwinkel).copy();
-      
+
       // neues Koordinatensystem das Tagential an das Rohr liegt
       lochv = lochpos.copy();
       lochv.sub(point.pos);
